@@ -44,15 +44,19 @@ class CPU:
         # for instruction in program:
         #     self.ram[address] = instruction
         #     address += 1
+        try:
 
-        with open(sys.argv[1]) as f:
-            for line in f:
-                string_val = line.split("#")[0].strip()
-                if string_val == '':
-                    continue
-                v = int(string_val, 2)
-                self.ram[address] = v
-                address += 1
+            with open(sys.argv[1]) as f:
+                for line in f:
+                    string_val = line.split("#")[0].strip()
+                    if string_val == '':
+                        continue
+                    v = int(string_val, 2)
+                    self.ram[address] = v
+                    address += 1
+        except:
+            print("Need a valid second file arge")
+            sys.exit()
 
 
 

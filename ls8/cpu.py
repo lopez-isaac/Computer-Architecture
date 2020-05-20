@@ -99,11 +99,15 @@ class CPU:
 
         # register PC, and store that result in IR
         IR = self.pc
+        SP = 7
+        self.register[SP] = 0xf4
 
         HLT = 0b00000001
         LDI = 0b10000010
         PRN = 0b01000111
         MUL = 0b10100010
+        PUSH = 0b01000101
+        POP = 0b01000110
 
         halted = False
 
@@ -117,7 +121,7 @@ class CPU:
 
             # 3 bit operation
             elif instruction == LDI:
-                #where and what
+                # where and what
                 self.register[operand_a] = operand_b
                 IR += 3
 
@@ -125,6 +129,35 @@ class CPU:
             elif instruction == MUL:
                 self.alu("MUL", operand_a, operand_b)
                 IR += 3
+
+            #2 bit operation
+            elif instruction == PUSH:
+                # Decrement the SP
+                self.register[SP] -= 1
+
+                # Get register number
+                reg_num = self.ram[IR + 1]
+
+                # Get value out of the register
+                val = self.register[reg_num]
+
+                # Store value in memory at SP
+                top_of_stack_addr = self.register[SP]
+                self.ram[top_of_stack_addr] = val
+                IR += 2
+
+            # 2 bit operatoin
+            elif instruction == POP:
+                # Copy the value from the address pointed to by SP to the given register.
+                # Get register number
+                reg_num = self.ram[IR+1]
+                # Copy the value out of register
+                val = self.ram[self.register[SP]]
+                # overwrite to given register
+                self.register[reg_num] = val
+                #Increment SP
+                self.register[SP] += 1
+                IR += 2
 
             # 2 bin operation
             elif instruction == PRN:

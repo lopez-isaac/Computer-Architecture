@@ -136,7 +136,7 @@ class CPU:
                 self.register[SP] -= 1
 
                 # Get register number
-                reg_num = self.ram[IR + 1]
+                reg_num = operand_a
 
                 # Get value out of the register
                 val = self.register[reg_num]
@@ -150,7 +150,7 @@ class CPU:
             elif instruction == POP:
                 # Copy the value from the address pointed to by SP to the given register.
                 # Get register number
-                reg_num = self.ram[IR+1]
+                reg_num = operand_a
                 # Copy the value out of register
                 val = self.ram[self.register[SP]]
                 # overwrite to given register

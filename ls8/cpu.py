@@ -108,6 +108,9 @@ class CPU:
         MUL = 0b10100010
         PUSH = 0b01000101
         POP = 0b01000110
+        CALL = 0b01010000
+        RET = 0b00010001
+        ADD = 0b10100000
 
         halted = False
 
@@ -128,6 +131,11 @@ class CPU:
             # 3 bit operationn
             elif instruction == MUL:
                 self.alu("MUL", operand_a, operand_b)
+                IR += 3
+
+            # 3 bit operation
+            elif instruction == ADD:
+                self.alu("ADD", operand_a, operand_b)
                 IR += 3
 
             #2 bit operation
@@ -158,6 +166,31 @@ class CPU:
                 #Increment SP
                 self.register[SP] += 1
                 IR += 2
+
+            # 2 bit operation
+            elif instruction == CALL:
+                return_address = IR + 2
+
+                #push to the stack
+                self.register[SP] -= 1
+                top_of_stack_addr = self.register[SP]
+                self.ram[top_of_stack_addr] = return_address
+
+                #set PC to subroutine address
+                reg_num = operand_a
+                subroutine_address = self.register[reg_num]
+
+                IR = subroutine_address
+
+            #1 bit operation
+            elif instruction == RET:
+                # pop the return address of the stack
+                top_of_stack_addr = self.register[SP]
+                return_address = self.ram[top_of_stack_addr]
+                self.register[SP] += 1
+
+                # Store it in the PC
+                IR = return_address
 
             # 2 bin operation
             elif instruction == PRN:
